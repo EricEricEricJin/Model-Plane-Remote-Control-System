@@ -1,3 +1,10 @@
+'''
+    Created by Eric
+    on Apr.11.2020
+
+    receive command from server
+'''
+
 from global_var import command_list
 from config_file import CMD_PACK_FORMAT, CMD_PACK_KEYS, SERVER_IP, CMD_PORT, CMD_MAX_RECV
 from communications.receive import Receive

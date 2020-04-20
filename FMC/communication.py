@@ -1,3 +1,10 @@
+'''
+    Created by Eric
+    on Apr.11.2020
+    
+    Class to communicate(send/recv) with server
+'''
+
 from communications.receive_cmd import receiveCmd
 from communications.send_data import sendData
 from communications.send_video import sendVideo

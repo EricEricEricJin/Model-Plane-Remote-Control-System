@@ -1,3 +1,10 @@
+'''
+    Created by Eric
+    on Mar.28
+
+    web camera module
+'''
+
 import sys
 import os
 sys.path.append("..")

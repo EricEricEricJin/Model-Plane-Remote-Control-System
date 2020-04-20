@@ -1,3 +1,10 @@
+'''
+    Created by Eric
+    on Apr.11.2020
+
+    send data to server
+'''
+
 from global_var import data_list
 from config_file import DATA_PACK_FORMAT, SERVER_IP, DATA_PORT
 from communications.send import Send

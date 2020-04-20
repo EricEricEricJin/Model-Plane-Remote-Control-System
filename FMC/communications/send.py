@@ -1,3 +1,10 @@
+'''
+    Created by Eric
+    on Apr.11.2020
+
+    socket send module
+'''
+
 from socket import *
 from threading import Thread
 from time import sleep

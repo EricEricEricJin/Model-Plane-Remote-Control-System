@@ -1,3 +1,10 @@
+'''
+    Created by Eric
+    on Apr.11.2020
+
+    Sensor program
+'''
+
 from sensors.webcam import webCam
 
 class Sensor:

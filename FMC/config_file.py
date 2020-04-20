@@ -1,3 +1,9 @@
+'''
+    Created by Eric
+
+    store configure values for the FMC program
+'''
+
 SERVER_IP = "127.0.0.1"
 VIDEO_PORT = 1234
 DATA_PORT = 2345

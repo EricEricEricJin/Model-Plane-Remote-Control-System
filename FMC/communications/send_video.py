@@ -1,3 +1,10 @@
+'''
+    Created by Eric
+    on Apr.11.2020
+
+    send video to server
+'''
+
 import sys
 import os
 sys.path.append("..")

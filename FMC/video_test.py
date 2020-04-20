@@ -1,3 +1,7 @@
+'''
+    Test of video transmition
+'''
+
 from communication import Communication
 from sensor import Sensor
 import global_var
