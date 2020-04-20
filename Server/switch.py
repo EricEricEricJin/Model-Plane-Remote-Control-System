@@ -1,9 +1,24 @@
+'''
+    Created by Eric
+    on Apr.05.2020
+'''
+
 from socket import *
 from threading import Thread
 from time import sleep
 
 class Switch:
+    '''
+        Class of a data switcher
+    '''
     def __init__(self, ip, port_recv, port_send, max_recv):
+        '''
+            ip: str, ip address of the machine
+            port_recv: int, port which data comein by
+            port_send: int, port which data send out by
+            max_recv: int, size of the binary sent
+        '''
+        
         self.serve = True
 
         self.max_recv = max_recv
