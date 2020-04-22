@@ -17,6 +17,8 @@ class Send:
         self.my_socket = socket(AF_INET, SOCK_STREAM)
         self.broken = None
     def connect(self, ip, port):
+        self.ip = ip
+        self.port = port
         try:
             self.my_socket.connect((ip, port))
             self.broken = False
@@ -35,7 +37,9 @@ class Send:
                 self.broken = False
             except:
                 self.broken = True
-                pass
+                self.connect(self.ip, self.port)
+                
+                
             sleep(delay)
 
     def change_data(self, new_data):
