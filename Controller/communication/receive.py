@@ -11,6 +11,8 @@ class Receive:
         self.broken = None
     
     def connect(self, ip, port):
+        self.ip = ip
+        self.port = port
         try:
             self.my_socket.connect((ip, port))
             self.broken = False
@@ -29,6 +31,7 @@ class Receive:
                 self.broken = False
             except:
                 self.broken = True
+                self.connect(self.ip, self.port)
 
     def get_data(self):
         return self.data

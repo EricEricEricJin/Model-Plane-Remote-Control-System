@@ -8,7 +8,7 @@ RecvController = Receive()
 
 ip = "127.0.0.1"
 # ip = "45.249.94.168"
-if RecvController.connect(ip, 2345) == 0:
+if RecvController.connect(ip, 5140) == 0:
     print("CAN'T CONNECT!")
 
 

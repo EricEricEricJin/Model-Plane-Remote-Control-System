@@ -39,6 +39,7 @@ class Switch:
         t_service.start()
 
     def _service(self):
+        broken = False
         t_conn_recv = Thread(target = self._connect_recv, args = ())
         t_conn_send = Thread(target = self._connect_send, args = ())
         t_conn_recv.start()
@@ -49,11 +50,18 @@ class Switch:
         
         while self.serve:
             try:
-                self.conn_send.send(self.conn_recv.recv(self.max_recv))
+                data = self.conn_recv.recv(self.max_recv)
             except:
-                print("Server Exception")
-                pass
-            # print("Server Serve")
+                self.conn_no -= 1
+                t_conn_recv = Thread(target = self._connect_recv, args = ())
+                t_conn_recv.start()
+
+            try:
+                self.conn_send.send(data)
+            except:
+                self.conn_no -= 1
+                t_conn_send = Thread(target = self._connect_send, args = ())
+                t_conn_send.start()
 
     def _connect_recv(self):
         self.conn_recv, addr = self.socket_recv.accept()
