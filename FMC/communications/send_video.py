@@ -43,6 +43,7 @@ class sendVideo:
     def _service(self):
         while self.serve:
             try:
+                # encode
                 img_param = [int(cv2.IMWRITE_JPEG_QUALITY), VIDEO_QUALITY]
                 _, bi = cv2.imencode(".jpg", global_var.video, params = img_param)
                 bi = np.array(bi)
