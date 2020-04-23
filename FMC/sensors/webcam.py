@@ -22,7 +22,6 @@ class webCam:
         self.device = VIDEO_DEVICE
         self.crate = VIDEO_CRATE
         self.delay = VIDEO_DELAY
-        
 
         self.serve = True
         self.isBroken = True

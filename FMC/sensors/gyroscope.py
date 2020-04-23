@@ -3,6 +3,7 @@ from time import sleep
 from threading import Thread
 
 class Gyroscope:
+    KEY = "GYROSCOPE"
     def __init__(self):
         self.serve = True
         pass
