@@ -1,7 +1,3 @@
-import sys
-import os
-sys.path.append("..")
-
 import RPi.GPIO as GPIO
 import config_file
 
