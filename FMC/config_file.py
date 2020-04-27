@@ -83,3 +83,16 @@ GEAR_R_R_INIT = 0
 GEAR_R_R_MIN = 0
 GEAR_R_R_MAX = 90
 # ============
+
+# ============ MCAS ============
+def IS_STALL(vel, pitch, yaw, roll):
+    # Examine whether is STALL
+    return True
+
+def IS_TO():
+    # Examine whether is TO
+    return True
+
+def IS_LDG():
+    # Examine whether is landing
+    return True
