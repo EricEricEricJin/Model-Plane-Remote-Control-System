@@ -1,6 +1,7 @@
 from communication import Communication
 from sensor import Sensor
 from motion import Motion
+from ap import autoPilot
 from global_var import *
 from config_file import *
 
@@ -24,6 +25,7 @@ class Main:
         self.COMMUNICATION = Communication()
         self.SENSOR = Sensor()
         self.MOTION = Motion()
+        self.AP = autoPilot()
 
         if self.COMMUNICATION.init() == 1:
             print("communication module start success")
@@ -40,9 +42,13 @@ class Main:
         else:
             print("sensor module start failure")
 
+        self.AP.init(self.MOTION)
+
     def run(self):
         self.COMMUNICATION.run()
         self.SENSOR.run()
+        self.AP.run()
+
         while True:
 
             # How to say its taking off / landing?
@@ -56,21 +62,28 @@ class Main:
             else:
                 
                 if command_list["AP_ALT_ON"]:
-                    # turn on alt ap
-                    pass
+                    self.AP.alt_tar = command_list["AP_ALT_VAL"]
+                    self.AP.alt_vs = command_list["AP_VS_VAL"]
+                    self.AP.alt_on = True
+                    
                 else:
                     # turn off alt ap
+                    self.AP.alt_on = False
                     self.MOTION.change_to("ELEVATOR", lever_y2elevator(command_list["LEVER_Y"]))
 
                 if command_list["AP_HDG_ON"]:
-                    # turn on hdg ap
-                    pass
+                    self.AP.hdg_tar = command_list["AP_HDG_VAL"]
+                    self.AP.hdg_on = True
+                    
                 else:
-                    # turn off hdg ap
+                    self.AP.hdg_on = False
                     self.MOTION.change_to("RUDDER", lever_x2rudder(command_list["LEVER_X"]))
-                    self.MOTION.change_to("AILERON", 114)
+                    # self.MOTION.change_to("AILERON", 114)
+                
                 if command_list["AP_VEL_ON"]:
-                    # turn on velocity
-                    pass
+                    self.AP.vel_tar = command_list["AP_VEL_VAL"]
+                    self.AP.vel_on = True
+                    
                 else:
+                    self.AP.vel_on = False
                     self.MOTION.change_to("ENGINE", (command_list["THRUST_1"], command_list["THRUST_2"]))

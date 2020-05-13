@@ -31,7 +31,7 @@
 
 /**
  * Frame format:
- * [start: 1][source: 4][target: 4][len: 6][data: 48][checksum: 1]
+ * [start: 1][source: 4][target: 4][frame_no: 8][len: 6][data: 40][checksum: 1]
  * 
  * 校验不需要switch管 switch需要看的只是source和target
  * switch不可以更改数据帧
