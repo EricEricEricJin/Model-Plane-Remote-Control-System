@@ -10,12 +10,25 @@ def lever_y2elevator(y):
     # 侧杆y轴幅度转升降舵角度
     return y
 
-def rudder2ali(r):
+def rudder2ail(r):
     return r
 
 
-def lever_x2rudder(x):
+def lever_x2ail(x):
     return x
+
+def stall():
+    return True
+
+def deep_stall():
+    return True
+
+def roll2ail():
+    return 11.4514
+
+def rudder2rudder():
+    return 11.4
+
 
 class Main:
     def __init__(self):
@@ -50,7 +63,37 @@ class Main:
         self.AP.run()
 
         while True:
+            if (stall() and command_list["MCAS_ON"] and (not command_list["GEAR_DOWN"])):
+                if deep_stall():
+                    self.AP.alt_on = False
+                    self.AP.hdg_on = False
+                    self.AP.vel_on = False
 
+                else:
+                    self.MOTION.change_to("elevator", -100)
+                    self.MOTION.change_to("engine", (100, 100))
+                    self.MOTION.change_to("aileron", roll2ail())
+            else:
+                if command_list["AP_ALT_ON"]:
+                    self.AP.alt_tar = command_list["AP_ALT_VAL"]
+                    self.AP.alt_vs = command_list["AP_VS_VAL"]
+                    self.AP.alt_on = True
+                    
+                else:
+                    # turn off alt ap
+                    self.AP.alt_on = False
+                    self.MOTION.change_to("ELEVATOR", lever_y2elevator(command_list["LEVER_Y"]))                
+                
+                if command_list["AP_HDG_ON"]:
+                    self.AP.hdg_tar = command_list["AP_HDG_VAL"]
+                    self.AP.hdg_on = True
+                    
+                else:
+                    self.AP.hdg_on = False
+                    self.MOTION.change_to("RUDDER", rudder2rudder(command_list["RUDDER"]))
+                    self.MOTION.change_to("AILERON", rudder2ail(rudder2rudder(command_list["RUDDER"]))
+                if command_list[""]
+'''
             # How to say its taking off / landing?
             # set a timeout: after n secs can;t roll out -> ap / manue
             if (not (IS_LDG() and data_list["ALT"] < 3)) and IS_STALL(data_list["AIR_V"], data_list["PITCH"], data_list["YAW"], data_list["ROLL"]):
@@ -61,24 +104,9 @@ class Main:
                 
             else:
                 
-                if command_list["AP_ALT_ON"]:
-                    self.AP.alt_tar = command_list["AP_ALT_VAL"]
-                    self.AP.alt_vs = command_list["AP_VS_VAL"]
-                    self.AP.alt_on = True
-                    
-                else:
-                    # turn off alt ap
-                    self.AP.alt_on = False
-                    self.MOTION.change_to("ELEVATOR", lever_y2elevator(command_list["LEVER_Y"]))
 
-                if command_list["AP_HDG_ON"]:
-                    self.AP.hdg_tar = command_list["AP_HDG_VAL"]
-                    self.AP.hdg_on = True
-                    
-                else:
-                    self.AP.hdg_on = False
-                    self.MOTION.change_to("RUDDER", lever_x2rudder(command_list["LEVER_X"]))
-                    # self.MOTION.change_to("AILERON", 114)
+
+
                 
                 if command_list["AP_VEL_ON"]:
                     self.AP.vel_tar = command_list["AP_VEL_VAL"]
@@ -87,3 +115,4 @@ class Main:
                 else:
                     self.AP.vel_on = False
                     self.MOTION.change_to("ENGINE", (command_list["THRUST_1"], command_list["THRUST_2"]))
+'''

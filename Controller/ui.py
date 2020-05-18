@@ -1,12 +1,56 @@
-from tkinter import *
-from time import sleep
+from math import sin, cos, pi
+
 from threading import Thread
+from time import sleep
+from tkinter import *
+from PIL import Image, ImageTk
+
+class Engine:
+    def __init__(self, master, length, place_x, place_y):
+        self.length = length
+        self.frame = Frame(master = master, width = length, height = length, bg = "black")
+        
+        self.arc = Canvas(self.frame, width = length, height = length, bg = "black", bd = 0, highlightthickness = 0)
+        self.arc.create_arc(5, 5, length - 5, length - 5, start = 0, extent = 225, style = ARC, outline = "white", width = 2)
+        self.arc.create_rectangle(0.5 * length, 0.6 * length, 0.9 * length, 0.9 * length, outline = "white", width = 2)
+        self.arc.pack()
+        # self.frame.pack(side = pack_side, fill = "both")
+        self.frame.place(x = place_x, y = place_y)
+        self.r = length / 2 - 5
+        self.center = (int(length / 2), int(length / 2))
+
+
+    def turn_on(self, val_min, val_max):
+        self.val = 0
+        self.val_max = val_max
+        self.val_min = val_min
+        self.text_color = "green"
+        self.arc.create_text(0.25 * self.length, 0.8 * self.length, text = str(val_min), fill = "white", font=("Menlo", int(self.length / 15)))
+        self.arc.create_text(0.9 * self.length, 0.55 * self.length, text = str(val_max), fill = "white", font=("Menlo", int(self.length / 15)))
+        # self.text = self.arc.create_text(0.75 * self.length, 0.8 * self.length, text = str(self.val), fill = self.text_color)
+        self.text = self.arc.create_text(0.7 * self.length, 0.75 * self.length, text = "", fill = self.text_color, font = ("Menlo", int(self.length / 15)))
+        self.pointer = self.arc.create_line(self.center, (self._val2pos(0)[0] + self.center[0], self.length - (self._val2pos(0)[1] + self.center[1])), fill = "green", width = 3)
+        self.arc.pack()
+
+    def change_to(self, val):
+
+        self.val = val
+        self.arc.coords(self.pointer, self.center[0], self.center[1], self._val2pos(val)[0] + self.center[0], self.length - (self._val2pos(val)[1] + self.center[1]))
+        self.arc.itemconfig(self.text, text = str(val))
+        self.arc.pack()
+
+    def _val2pos(self, val):
+        return (
+            int(cos((self.val_max - val) / (self.val_max - self.val_min) * (5/4) * pi) * self.r),
+            int(sin((self.val_max - val) / (self.val_max - self.val_min) * (5/4) * pi) * self.r)
+        )
 
 class rollBar:
-    def __init__(self, master, width, height, LoR):
+    
+    def __init__(self, master, width, height, LoR, place_x, place_y):
         self.LoR = LoR
         self.frame = Frame(master = master, width = width, height = height, bg = "black")
-        self.frame.pack()
+        self.frame.place(x = place_x, y = place_y)
         self.canvas = Canvas(self.frame, width = width, height = height, bg = "grey", bd = 0, highlightthickness = 0)
         self.canvas.pack()
         self.width = width
@@ -104,20 +148,49 @@ class rollBar:
             
             self.canvas.create_rectangle(0, int(self.height / 2) + 6, self.width - 11, int(self.height / 2) - 6, outline = "white", fill = "black")
             self.canvas.create_text(int((self.width - 10) / 2) + 10, int(self.height / 2), text = str(val), fill = "white", font=("Menlo", int(self.width / 5 + 1)))
-            self.canvas.pack()            
+            self.canvas.pack()
+    
+class Video:
+    def __init__(self, master, width, height, place_x, place_y):
+        self.frame = Frame(master = master, width = width, height = height, bg = "black")
+        self.frame.place(x = place_x, y = place_y)
+        self.im = None
 
+        self.canvas = Canvas(self.frame, width = width, height = height, bg = "grey", bd = 0, highlightthickness = 0)
+        self.canvas.pack()
+
+
+    def turn_on(self):
+        pass
+
+    def change_to(self, image):
+        self.im = ImageTk.PhotoImage(image = image)
+        self.canvas.create_image(0, 0, image = self.im)
+
+class Attitude:
+    def __init__(self):
+        pass
+
+
+
+class UI:
+    def __init__(self):
+        pass
+
+    def init(self):
+        self.main_win = Tk()
         
+        self.main_win.geometry("1900x1000")
+        
+        V = Video(self.main_win, 960, 540, 0, 0)
+        ENG_1 = Engine(self.main_win, 100, 0, 720)
+        AS = rollBar(self.main_win, 20, 100, "L", 100, 720)
+        
+    
+    def run(self):
+        self.main_win.mainloop()
 
 if __name__ == "__main__":
-    root = Tk()
-    root.geometry("50x300")
-    R = rollBar(root, 50, 300, "R")
-    def c_c():
-        sleep(1)
-        R.turn_on(100)
-        for i in range(500):
-            R.change_to(i)
-            sleep(0.01)
-    t = Thread(target = c_c, args = ())
-    t.start()
-    root.mainloop()
+    U = UI()
+    U.init()
+    U.run()

@@ -2,14 +2,13 @@ from socket import *
 from threading import Thread
 from time import sleep
 
-class Receive:
+class Send:
     def __init__(self):
         self.serve = True
         self.data = None
-
+        
         self.my_socket = socket(AF_INET, SOCK_STREAM)
         self.broken = None
-    
     def connect(self, ip, port):
         try:
             self.my_socket.connect((ip, port))
@@ -18,20 +17,23 @@ class Receive:
         except:
             return 0
 
-    def run(self, MAX_RECV):
-        t = Thread(target = self._service, args = (MAX_RECV))
+    def run(self, delay):
+        t = Thread(target = self._service, args = (delay,))
         t.start()
 
-    def _service(self, MAX_RECV):
+    def _service(self, delay):
         while self.serve:
             try:
-                self.data = self.my_socket.recv(MAX_RECV)
+                self.my_socket.send(self.data)
+                print("SEND!")
                 self.broken = False
             except:
                 self.broken = True
+                pass
+            sleep(delay)
 
-    def get_data(self):
-        return self.data
+    def change_data(self, new_data):
+        self.data = new_data
 
     def is_broken(self):
         return self.broken
