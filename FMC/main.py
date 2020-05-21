@@ -23,10 +23,10 @@ def stall():
 def deep_stall():
     return True
 
-def roll2ail():
+def roll2ail(r):
     return 11.4514
 
-def rudder2rudder():
+def rudder2rudder(r):
     return 11.4
 
 
@@ -72,7 +72,7 @@ class Main:
                 else:
                     self.MOTION.change_to("elevator", -100)
                     self.MOTION.change_to("engine", (100, 100))
-                    self.MOTION.change_to("aileron", roll2ail())
+                    self.MOTION.change_to("aileron", roll2ail(data_list["ROLL"]))
             else:
                 if command_list["AP_ALT_ON"]:
                     self.AP.alt_tar = command_list["AP_ALT_VAL"]
@@ -82,7 +82,7 @@ class Main:
                 else:
                     # turn off alt ap
                     self.AP.alt_on = False
-                    self.MOTION.change_to("ELEVATOR", lever_y2elevator(command_list["LEVER_Y"]))                
+                    self.MOTION.change_to("elevator", lever_y2elevator(command_list["LEVER_Y"]))                
                 
                 if command_list["AP_HDG_ON"]:
                     self.AP.hdg_tar = command_list["AP_HDG_VAL"]
@@ -90,29 +90,12 @@ class Main:
                     
                 else:
                     self.AP.hdg_on = False
-                    self.MOTION.change_to("RUDDER", rudder2rudder(command_list["RUDDER"]))
-                    self.MOTION.change_to("AILERON", rudder2ail(rudder2rudder(command_list["RUDDER"]))
-                if command_list[""]
-'''
-            # How to say its taking off / landing?
-            # set a timeout: after n secs can;t roll out -> ap / manue
-            if (not (IS_LDG() and data_list["ALT"] < 3)) and IS_STALL(data_list["AIR_V"], data_list["PITCH"], data_list["YAW"], data_list["ROLL"]):
-                # HOW TO DO WHEN STALL
-                self.MOTION.change_to("ENGINE", (1, 1)) # TOGA THRUST
-                self.MOTION.change_to("ELEVATOR", -1)
-                self.MOTION.change_to("RUDDER", 0)
-                
-            else:
-                
+                    self.MOTION.change_to("rudder", rudder2rudder(command_list["RUDDER"]))
+                    self.MOTION.change_to("aileron", rudder2ail(rudder2rudder(command_list["RUDDER"])))
 
-
-
-                
-                if command_list["AP_VEL_ON"]:
+                if command_list["AP_VEL_ON"] == True:
                     self.AP.vel_tar = command_list["AP_VEL_VAL"]
                     self.AP.vel_on = True
-                    
                 else:
                     self.AP.vel_on = False
-                    self.MOTION.change_to("ENGINE", (command_list["THRUST_1"], command_list["THRUST_2"]))
-'''
+                    self.MOTION.change_to("engine", (command_list["THRUST_1"], command_list["THRUST_2"]))

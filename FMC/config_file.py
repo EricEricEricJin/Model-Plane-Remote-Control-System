@@ -85,6 +85,7 @@ GEAR_R_R_MIN = 0
 GEAR_R_R_MAX = 90
 # ============
 
+'''
 # ============ MCAS ============
 def IS_STALL(vel, pitch, yaw, roll):
     # Examine whether is STALL
@@ -97,3 +98,19 @@ def IS_TO():
 def IS_LDG():
     # Examine whether is landing
     return True
+'''
+
+def rudder_pctg2deg(pctg):
+    return 114514
+
+def aileron_l_pctg2deg(pctg):
+    return 1919810
+
+def aileron_r_pctg2deg(pctg):
+    return 114514
+
+def elevator_l_pctg2deg(pctg):
+    return 1919810
+
+def elevator_r_pctg2deg(pctg):
+    return 114514

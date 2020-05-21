@@ -11,39 +11,7 @@ import config_file
 
 class Main:
     def __init__(self):
-        # read from condif-file
-        # read the ip, port
-        # read the bounds of dashboard
-        self.v_ip = config_file.IP
-        self.v_port = config_file.VIDEO_PORT
-        self.c_ip = config_file.IP
-        self.c_port = config_file.CMD_PORT
-        self.d_ip = config_file.IP
-        self.d_port = config_file.DATA_PORT
-
-        self.video = None
-        self.data = None
-
-        self.msg_send_to_ui = {
-            "data": None,
-            "video": None,
-            "connection": {
-                "video": False,
-                "data": False,
-                "cmd": False
-            }
-        }
-
-        self.msg_recv_from_ui = {
-            "operation": None,
-            "else": None
-        }
-
-        self.communication_serve = True
-        self.all_serve = True
-
         pass
-
     def start_ui_and_check(self):
         self.ui = UI()
         self.ui.run()
@@ -53,10 +21,8 @@ class Main:
         t_ui.start()
     
     def _ui_service(self):
-        while self.all_serve:
-            self.ui.change_info(self.msg_send_to_ui)
-            self.msg_recv_from_ui = self.ui.get_msg()
-
+        pass
+    
     def connect_to_server_and_start_service(self):
         self.send_cmd = Send()
         self.recv_data = Receive()

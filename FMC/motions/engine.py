@@ -1,4 +1,4 @@
-from esc import Esc
+from motions.esc import Esc
 import config_file
 
 class Engine:

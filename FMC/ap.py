@@ -35,7 +35,10 @@ class autoPilot:
         pass
 
     def _a2e(self, delta_a, vs):
-        pass
+        if delta_a < 6:
+            return (global_var.data_list["ENG_1"] + global_var.data_list["ENG_1"]) / 2
+        else:
+            return vs / 100 # vs has +/-
 
     def _h2r(self, delta_h):
         pass

@@ -19,7 +19,19 @@ data_list = {
     "PITCH": None, "YAW": None, "ROLL": None,
     "ALT": None, "RADIO_H": None, 
     "AIR_V": None, "GROUND_V": None,
-    "RADAR": None
+    "RADAR": None,
+
+    "ENG_1": None, "ENG_2": None,
+    "REV_1": None, "REV_2": None,
+
+    "RUDDER": None,
+    "ELEVATOR": None,
+
+    "AILERON": None,
+
+    "FLAPS": None,
+    
+    "GEAR": None
 }
 video = None
 
