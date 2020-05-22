@@ -17,8 +17,8 @@ class Motion:
             self.RUDDER.init(RUDDER_BCM, SERVO_FREQ, RUDDER_INIT)
             self.AILERON_L.init(AILERON_L_BCM, SERVO_FREQ, AILERON_L_INIT)
             self.AILERON_R.init(AILERON_R_BCM, SERVO_FREQ, AILERON_R_INIT)
-            self.ELEVATOR_L.init(ELEVATOR_1_BCM, SERVO_FREQ, ELEVATOR_1_INIT)
-            self.ELEVATOR_R = init(ELEVATOR_2_BCM, SERVO_FREQ, ELEVATOR_2_INIT)
+            self.ELEVATOR_L.init(ELEVATOR_L_BCM, SERVO_FREQ, ELEVATOR_L_INIT)
+            self.ELEVATOR_R = init(ELEVATOR_R_BCM, SERVO_FREQ, ELEVATOR_R_INIT)
             return 1
         except:
             return 0

@@ -49,15 +49,15 @@ RUDDER_INIT = 90
 RUDDER_MIN = 45
 RUDDER_MAX = 135
 
-ELEVATOR_1_BCM = 1
-ELEVATOR_1_INIT = 90
-ELEVATOR_1_MAX = 135
-ELEVATOR_1_MIN = 45
+ELEVATOR_L_BCM = 1
+ELEVATOR_L_INIT = 90
+ELEVATOR_L_MAX = 135
+ELEVATOR_L_MIN = 45
 
-ELEVATOR_2_BCM = 2
-ELEVATOR_2_INIT = 90
-ELEVATOR_2_MAX = 135
-ELEVATOR_2_MIN = 45
+ELEVATOR_R_BCM = 2
+ELEVATOR_R_INIT = 90
+ELEVATOR_R_MAX = 135
+ELEVATOR_R_MIN = 45
 
 AILERON_L_BCM = 3
 AILERON_L_INIT = 90
@@ -101,16 +101,16 @@ def IS_LDG():
 '''
 
 def rudder_pctg2deg(pctg):
-    return 114514
+    return (pctg / 256 * (RUDDER_MAX - RUDDER_MIN) + RUDDER_MIN)
 
 def aileron_l_pctg2deg(pctg):
-    return 1919810
+    return (pctg / 256 * (AILERON_L_MAX - AILERON_L_MIN) + AILERON_L_MIN)
 
 def aileron_r_pctg2deg(pctg):
-    return 114514
+    return (pctg / 256 * (AILERON_R_MAX - AILERON_R_MIN) + AILERON_R_MIN)
 
 def elevator_l_pctg2deg(pctg):
-    return 1919810
+    return (pctg / 256 * (ELEVATOR_L_MAX - ELEVATOR_L_MIN) + ELEVATOR_L_MIN)
 
 def elevator_r_pctg2deg(pctg):
-    return 114514
+    return (pctg / 256 * (ELEVATOR_R_MAX - ELEVATOR_R_MIN) + ELEVATOR_R_MIN)
