@@ -90,7 +90,7 @@ class Servo:
         self.servo.ChangeDutyCycle(self._deg2duty(deg))
 
     def _deg2duty(self, deg):
-        return (deg - 2) * 18
+        return (deg / 18) + 2
 
     def __del__(self):
         self.servo.stop()
@@ -101,7 +101,7 @@ class Motion:
 
         self.ENG_1 = Esc(ENGINE_1_BCM, 0)
         self.ENG_2 = Esc(ENGINE_2_BCM, 0)
-
+        
         self.REV_1 = Servo(REV_1_BCM, REV_1_OFF)
         self.REV_2 = Servo(REV_2_BCM, REV_2_OFF)
 
