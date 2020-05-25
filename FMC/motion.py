@@ -5,7 +5,6 @@ import global_var
 
 ESC_FREQ = 50
 
-
 SERVO_FREQ = 50
 
 GEAR_F_BCM = 0
@@ -36,35 +35,34 @@ AILERON_L_INIT = 90
 AILERON_R_BCM = 8
 AILERON_R_INIT = 90
 def aileron_l_val2deg(val):
-    pass
+    return 90 + 90 * val
 def aileron_r_val2deg(val):
-    pass
+    return 90 - 90 * val
 
 FLAPS_L_BCM = 9
-FLAPS_L_INIT = 0
+FLAPS_L_INIT = 90
 FLAPS_R_BCM = 10
-FLAPS_R_INIT = 0
+FLAPS_R_INIT = 90
 def flaps_l_val2deg(val):
-    pass
+    return 90 + val
 def flaps_r_val2deg(val):
-    pass
+    return 90 - val
 
 
 RUDDER_BCM = 11
 RUDDER_INIT = 90
 def rudder_val2deg(val):
-    pass
+    return 90 + 90 * val
 
 ELEVATOR_L_BCM = 12
 ELEVATOR_L_INIT = 90
 ELEVATOR_R_BCM = 13
 ELEVATOR_R_INIT = 90
 def elevator_l_val2deg(val):
-    pass
+    return 90 + 90 * val
 
 def elevator_r_val2deg(val):
-    pass
-
+    return 90 - 90 * val
 
 
 class Esc:
