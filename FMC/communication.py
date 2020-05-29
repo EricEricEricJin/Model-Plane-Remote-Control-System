@@ -3,7 +3,6 @@
 from threading import Thread
 from socket import *
 
-
 SERVER_IP = "127.0.0.1"
 VIDEO_PORT = 1140
 DATA_PORT = 1910
@@ -33,12 +32,11 @@ class Socket:
         self.port = port
         self.my_socket.connect((ip, port))
 
-
     def send(self, data):
-        pass
+        self.my_socket.send(data)
 
     def recv(self, MAX_RECV):
-        pass
+        return self.my_socket.recv(MAX_RECV)
 
 class Communication:
-    
+    def 

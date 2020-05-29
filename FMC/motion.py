@@ -98,10 +98,10 @@ class Servo:
 class Motion:
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
-
+        
         self.ENG_1 = Esc(ENGINE_1_BCM, 0)
         self.ENG_2 = Esc(ENGINE_2_BCM, 0)
-        
+        """
         self.REV_1 = Servo(REV_1_BCM, REV_1_OFF)
         self.REV_2 = Servo(REV_2_BCM, REV_2_OFF)
 
@@ -119,6 +119,7 @@ class Motion:
         self.GEAR_F = Servo(GEAR_F_BCM, GEAR_F_DOWN)
         self.GEAR_R_L = Servo(GEAR_R_L_BCM, GEAR_R_L_DOWN)
         self.GEAR_R_R = Servo(GEAR_R_R_BCM, GEAR_R_R_DOWN)
+        """
 
     def change_pwr(self, pwr_1, pwr_2): # 0 ~ 100
         self.ENG_1.change_pwr(pwr_1)

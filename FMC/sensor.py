@@ -36,4 +36,3 @@ class Sensor:
     def __del__(self):
         self.serve = False
         sleep(0.2)
-        
