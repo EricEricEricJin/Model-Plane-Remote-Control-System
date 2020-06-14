@@ -1,6 +1,7 @@
 # motion
 
 import RPi.GPIO as GPIO
+
 import global_var
 
 ESC_FREQ = 50
@@ -70,7 +71,7 @@ class Esc:
         GPIO.setup(BCM_PORT, GPIO.OUT)
         self.esc = GPIO.PWM(BCM_PORT, ESC_FREQ)
         self.esc.start(self._pwr2duty(init_pwr))
-        
+
     def change_pwr(self, pwr):
         self.esc.ChangeDutyCycle(self._pwr2duty(pwr))
 
@@ -96,12 +97,14 @@ class Servo:
         self.servo.stop()
 
 class Motion:
-    def __init__(self):
+    def __init__(self, mq_ins):
+        self.mq_ins = mq_ins
+
         GPIO.setmode(GPIO.BCM)
-        
+
         self.ENG_1 = Esc(ENGINE_1_BCM, 0)
         self.ENG_2 = Esc(ENGINE_2_BCM, 0)
-        
+
         self.REV_1 = Servo(REV_1_BCM, REV_1_OFF)
         self.REV_2 = Servo(REV_2_BCM, REV_2_OFF)
 
@@ -112,20 +115,23 @@ class Motion:
         self.FLAPS_R = Servo(FLAPS_R_BCM, FLAPS_R_INIT)
 
         self.RUDDER = Servo(RUDDER_BCM, RUDDER_INIT)
-        
+
         self.ELEVATOR_L = Servo(ELEVATOR_L_BCM, ELEVATOR_L_INIT)
         self.ELEVATOR_R = Servo(ELEVATOR_R_BCM, ELEVATOR_R_INIT)
 
         self.GEAR_F = Servo(GEAR_F_BCM, GEAR_F_DOWN)
         self.GEAR_R_L = Servo(GEAR_R_L_BCM, GEAR_R_L_DOWN)
         self.GEAR_R_R = Servo(GEAR_R_R_BCM, GEAR_R_R_DOWN)
-        
+
 
     def change_pwr(self, pwr_1, pwr_2): # 0 ~ 100
         self.ENG_1.change_pwr(pwr_1)
         self.ENG_2.change_pwr(pwr_2)
-        global_var.data_list["ENG_1"] = int(pwr_1)
-        global_var.data_list["ENG_2"] = int(pwr_2)
+        # global_var.data_list["ENG_1"] = int(pwr_1)
+        # global_var.data_list["ENG_2"] = int(pwr_2)
+        self.mq_ins.send("communication", "motion", ["ENG_1", pwr_1])
+        self.mq_ins.send("communication")
+
 
     def change_aileron(self, val): # -1 ~ 1
         self.AILERON_L.change_deg(aileron_l_val2deg(val))

@@ -39,4 +39,8 @@ class Socket:
         return self.my_socket.recv(MAX_RECV)
 
 class Communication:
-    def 
+    def __init__(self):
+        pass
+
+    def run(self):
+        pass
