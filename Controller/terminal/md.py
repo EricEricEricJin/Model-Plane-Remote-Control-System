@@ -3,7 +3,6 @@
     Receive all data & send operations
 
     can shift windows without communicate with servo
-
 '''
 
 from tkinter import *
@@ -20,7 +19,7 @@ class MD:
         self.zeros = []
 
         self.frame = Frame(master = master, width = width, height = height, bg = "black")
-        self.canvas = Canvas(master = master, width = width, height = height, bg = "black", bd = 0, highlightthickness = 0)
+        self.canvas = Canvas(master = self.frame, width = width, height = height, bg = "black", bd = 0, highlightthickness = 0)
 
         texts = ["L FLA", "L AIL", "R AIL", "R FLA"]
 
@@ -33,16 +32,17 @@ class MD:
         self.canvas.create_text((1 / 5 * width), (5 / 3 * self.bar_height + self.bar_height) + 10, text = "L ELE", fill = "white")
         self.canvas.create_rectangle((4 / 5 * width - 1 / 2 * self.bar_width), (5 / 3 * self.bar_height), (4 / 5 * width - 1 / 2 * self.bar_width + self.bar_width), (8 / 3 * self.bar_height), outline = "white",  width = 2)
         self.canvas.create_text((4 / 5 * width), (5 / 3 * self.bar_height + self.bar_height) + 10, text = "R ELE", fill = "white")
-        
+
         self.canvas.create_rectangle((2 / 5 * width - 1 / 2 * self.bar_width - int(width / 20)), (8 / 3 * self.bar_height) - self.bar_width, (3 / 5 * width + 1 / 2 * self.bar_width + int(width / 20)), (8 / 3 * self.bar_height), outline = "white", width = 2)
         self.canvas.create_text(int(width / 2), (8 / 3 * self.bar_height) + 10, text = "RUD", fill = "white")
 
         self.canvas.pack()
-        self.frame.pack()
+        # self.frame.pack()
+        # return self.frame
 
     def change_to(self, flap_l, aile_l, aile_r, flap_r, ele_l, rud, ele_r):
         self.canvas.create_polygon()
-        
+
 
 if __name__ == "__main__":
     root = Tk("MD")
