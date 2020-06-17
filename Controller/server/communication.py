@@ -11,7 +11,8 @@ from time import sleep, time
 
 
 
-SERVER_IP = "127.0.0.1"
+# SERVER_IP = "127.0.0.1"
+SERVER_IP = "45.249.94.168"
 
 VIDEO_PORT = 2400
 VIDEO_HBP = 2500
@@ -57,6 +58,7 @@ class udpSocket:
 
     def send_heartBit(self, heartBit_content = b""):
         self.my_sock.sendto(heartBit_content, self.heartBit_addr)
+        self.send(b"")
 
     def __del__(self):
         self.serve = False
@@ -66,7 +68,8 @@ class udpSocket:
 class Communication:
     def __init__(self):
         self.serve = True
-        self.last_bit_time = 0
+        self.last_bit_time_v = 0
+        self.last_bit_time_d = 0
         self.video_sock = udpSocket(SERVER_IP, VIDEO_PORT, 40960, heartBit_port = VIDEO_HBP)
         self.data_sock = udpSocket(SERVER_IP, DATA_PORT, 1024, heartBit_port = DATA_HBP)
         self.cmd_sock = udpSocket(SERVER_IP, CMD_PORT, 1024)
@@ -81,8 +84,9 @@ class Communication:
 
     def _recv_v(self):
         while self.serve:
-            if time() - self.last_bit_time > 1:
+            if time() - self.last_bit_time_v > 1:
                 self.video_sock.send_heartBit(b"v")
+                self.last_bit_time_v = time()
             recv_raw = self.video_sock.recv()
             # print("Raw:", recv_raw)
             try:
@@ -94,9 +98,9 @@ class Communication:
 
     def _recv_d(self):
         while self.serve:
-            if time() - self.last_bit_time > 1:
+            if time() - self.last_bit_time_d > 1:
                 self.data_sock.send_heartBit(b"d")
-                self.last_bit_time = time()
+                self.last_bit_time_d = time()
             recv_raw = self.data_sock.recv()
             recv_unpacked = struct.unpack(DATA_PACK_FORMAT, recv_raw)
             for i in range(len(DATA_PACK_KEYS)):
@@ -105,6 +109,7 @@ class Communication:
     def _send(self):
         while self.serve:
             self.cmd_sock.send(struct.pack(CMD_PACK_FORMAT, *list(global_var.command_list.values())))
+            sleep(0.01)
 
 
 if __name__ == "__main__":
@@ -115,9 +120,10 @@ if __name__ == "__main__":
         print(global_var.data_list)
         try:
             cv2.imshow("recv", global_var.video)
-            print('IM SHOW')
-        except:
-            pass
+            # print('IM SHOW')
+        except Exception as e:
+            print(e)
+            print(global_var.video)
         k = cv2.waitKey(5)& 0xFF
         if k==27:
             break

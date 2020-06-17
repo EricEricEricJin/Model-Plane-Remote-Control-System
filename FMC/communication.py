@@ -13,7 +13,9 @@ from time import sleep, time
 
 
 
-SERVER_IP = "127.0.0.1"
+# SERVER_IP = "127.0.0.1"
+SERVER_IP = "45.249.94.168"
+
 VIDEO_PORT = 2000
 DATA_PORT = 2100
 CMD_PORT = 2200
@@ -52,8 +54,9 @@ class udpSocket:
         # print("udpsock recv")
         return self.my_sock.recv(self.max_recv)
 
-    def send_heartBit(self):
-        self.my_sock.sendto(b"", self.heartBit_addr)
+    def send_heartBit(self, heartBit_content = b""):
+        self.my_sock.sendto(heartBit_content, self.heartBit_addr)
+        self.send(b"")
 
     def __del__(self):
         self.serve = False
@@ -68,25 +71,28 @@ class Communication:
         self.cmd_sock = udpSocket(SERVER_IP, CMD_PORT, 1024, heartBit_port = CMD_HBP)
         self.serve = True
 
-        self.last_bit_time = None
+        self.last_bit_time = 0
 
 
     def run(self):
         t_recving = Thread(target = self._recving)
         t_sending = Thread(target = self._sending)
 
-        self.cmd_sock.send_heartBit()
-        self.last_bit_time = time()
+        # self.cmd_sock.send_heartBit()
+        # self.last_bit_time = time()
         t_recving.start()
         t_sending.start()
 
 
     def _recving(self):
         while self.serve:
+            # print("START RECV CMD")
             if time() - self.last_bit_time > 1:
-                self.cmd_sock.send_heartBit()
+                self.cmd_sock.send_heartBit(b"c")
                 self.last_bit_time = time()
+                # print("CMD HB SEND")
 
+            # print("CMD SOCK RECVING...")
             recv_raw = self.cmd_sock.recv()
             # print("RAW:", recv_raw)
             try:
@@ -97,13 +103,13 @@ class Communication:
             except Exception as e:
                 print(e)
 
-            # print("CMD", global_var.command_list)
+            print("CMD", global_var.command_list)
 
 
     def _sending(self):
         while self.serve:
             try:
-                print(global_var.command_list)
+                # print(global_var.command_list)
                 packed_data = struct.pack(DATA_PACK_FORMAT, *list(global_var.data_list.values()))
                 self.data_sock.send(packed_data)
                 img_param = [int(cv2.IMWRITE_JPEG_QUALITY), 10] # Video quality = 10
@@ -115,7 +121,7 @@ class Communication:
             except Exception as e:
                 print("Video send exception:", e)
                 pass
-            sleep(0.05)
+            sleep(0.01)
 
     def __del__(self):
         self.serve = False

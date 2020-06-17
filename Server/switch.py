@@ -34,13 +34,13 @@ class Switch:
         while self.serve:
             try:
                 data = self.recv_sock.recv(self.max_recv)
-                print("Data:", data)
+                # print("Data:", data)
                 try:
                     import struct
-                    print(struct.pack("?Hh?H?Hhhh?HH??", data))
+                    # print(struct.pack("?Hh?H?Hhhh?HH??", data))
                 except:
                     pass
-                print("Addr:", self.send_addr)
+                # print("Addr:", self.send_addr)
                 self.send_sock.sendto(data, self.send_addr)
             except Exception as e:
                 # print(e)
