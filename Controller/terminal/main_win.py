@@ -1,5 +1,6 @@
 from tkinter import *
 from md import MD
+from pdb import set_trace
 
 
 class mainWin:
@@ -16,7 +17,7 @@ class mainWin:
         for frame in [MD]:
             f = frame(self.window, self.WIN_H, self.WIN_W)
             self.all_frames.append(f.frame)
-
+        set_trace()
 
         for menu_cmd in ["MD"]:
             self.menu_bar.add_command(label = menu_cmd, command = lambda:self._change_to(menu_cmd))
@@ -28,7 +29,7 @@ class mainWin:
         self.window.mainloop()
 
     def _change_to(self, frame_name):
-        print("CHANGE TO")
+        print("CHANGE TO", frame_name)
         if frame_name == "MD":
             self.all_frames[0].pack()
 

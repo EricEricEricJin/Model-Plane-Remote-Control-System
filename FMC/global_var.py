@@ -1,11 +1,4 @@
 command_list = {
-    """
-        Write by communication
-        Read by
-            main
-            AP
-            MCAS
-    """
 
     "AP_ALT_ON": None, "AP_ALT_VAL": None, "AP_VS_VAL": None,
     "AP_HDG_ON": None, "AP_HDG_VAL": None,
@@ -19,32 +12,20 @@ command_list = {
 }
 
 data_list = {
-    """
-        Write by sensors
-        Read by
-            communication
-            AP
-            MCAS
-    """
-
-    "PITCH": None, "YAW": None, "ROLL": None,
-    "ALT": None, "RADIO_H": None,
-    "AIR_V": None, "GROUND_V": None,
-
-    """
-        Write by motion
-        Read by
-            communication
-    """
 
 
-    "ENG_1": None, "ENG_2": None,
-    "REV_1": None, "REV_2": None,
-    "RUDDER": None,
-    "ELEVATOR": None,
-    "AILERON": None,
-    "FLAPS": None,
-    "GEAR_DOWN": None
+    "PITCH": 0, "YAW": 0, "ROLL": 0,
+    "ALT": 0, "RADIO_H": 0,
+    "AIR_V": 0, "GROUND_V": 0,
+
+
+    "ENG_1": 0, "ENG_2": 0,
+    "REV_1": False, "REV_2": False,
+    "RUDDER": 0,
+    "ELEVATOR": 0,
+    "AILERON": 0,
+    "FLAPS": 0,
+    "GEAR_DOWN": True
 }
 
 video = None
