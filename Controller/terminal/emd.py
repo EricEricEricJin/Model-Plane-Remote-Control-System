@@ -46,7 +46,7 @@ class MD:
 
 if __name__ == "__main__":
     root = Tk("MD")
-    root.geometry("640x800")
+    root.geometry("800x640")
     root.configure(bg = "black")
-    M = MD(root, 800, 640)
+    M = MD(root, 640, 800)
     root.mainloop()

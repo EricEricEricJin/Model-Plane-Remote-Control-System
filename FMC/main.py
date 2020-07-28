@@ -7,6 +7,7 @@ from ap import AP
 from mcas import MCAS
 from direct import Direct
 
+
 import global_var
 
 class Main():
@@ -14,10 +15,10 @@ class Main():
         self.Communication_ins = Communication()
         self.Motion_ins = Motion()
         self.Sensor_ins = Sensor()
-        self.inDirect_ins = inDirect()
-        self.AP_ins = AP()
-        self.MCAS_ins = MCAS()
-        self.Direct_ins = Direct()
+        self.inDirect_ins = inDirect(self.Motion_ins)
+        self.AP_ins = AP(self.Motion_ins)
+        self.MCAS_ins = MCAS(self.Motion_ins)
+        self.Direct_ins = Direct(self.Motion_ins)
 
 
     def run(self):

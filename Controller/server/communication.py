@@ -11,8 +11,8 @@ from time import sleep, time
 
 
 
-# SERVER_IP = "127.0.0.1"
-SERVER_IP = "45.249.94.168"
+SERVER_IP = "127.0.0.1"
+# SERVER_IP = "45.249.94.168"
 
 VIDEO_PORT = 2400
 VIDEO_HBP = 2500
@@ -116,10 +116,13 @@ if __name__ == "__main__":
     ComTest = Communication()
     ComTest.run()
 
+    cv2.namedWindow("mainwin", 0)
+    cv2.resizeWindow("mainwin", 1280, 720)
+
     while True:
         print(global_var.data_list)
         try:
-            cv2.imshow("recv", global_var.video)
+            cv2.imshow("mainwin", global_var.video)
             # print('IM SHOW')
         except Exception as e:
             print(e)

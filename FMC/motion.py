@@ -97,8 +97,7 @@ class Servo:
         self.servo.stop()
 
 class Motion:
-    def __init__(self, mq_ins):
-        self.mq_ins = mq_ins
+    def __init__(self):
 
         GPIO.setmode(GPIO.BCM)
 
@@ -127,10 +126,9 @@ class Motion:
     def change_pwr(self, pwr_1, pwr_2): # 0 ~ 100
         self.ENG_1.change_pwr(pwr_1)
         self.ENG_2.change_pwr(pwr_2)
-        # global_var.data_list["ENG_1"] = int(pwr_1)
-        # global_var.data_list["ENG_2"] = int(pwr_2)
-        self.mq_ins.send("communication", "motion", ["ENG_1", pwr_1])
-        self.mq_ins.send("communication")
+        global_var.data_list["ENG_1"] = int(pwr_1)
+        global_var.data_list["ENG_2"] = int(pwr_2)
+        
 
 
     def change_aileron(self, val): # -1 ~ 1

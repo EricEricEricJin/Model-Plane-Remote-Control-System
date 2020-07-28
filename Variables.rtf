@@ -1,0 +1,68 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2512
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;\f1\fnil\fcharset0 Menlo-Bold;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww24040\viewh15520\viewkind1
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs18 \cf0 FMC -> Local server:\
+	Data\
+		Sensors:\
+			AIR_SPEED (integer, knot, 0-255, 1B)\
+			GND_SPEED(integer, knot, 0-255, 1B)\
+			PSR_ALT(integer, feet, 0-65535, 2B)\
+			TOF_ALT(integer, cm, 0-200, 1B)\
+			GPS_ALT(integer, feet, 0-65536, 2B)\
+			MAG_HDG(integer, feet, 0-359, 2B)\
+			GPS_HDG(integer, feet, 0-359, 2B)\
+			PITCH(integer, deg, 0 - 359, 2B)\
+			ROLL(integer, deg, 0 - 359, 2B)\
+			ENG_1_PSR(integer, percentage, 0 - 100, 1B)\
+			ENG_2_PSR(integer, percentage, 0 - 100, 1B)\
+			LOC_LAT(float, -, , 4B)\
+			LOC_LON(float, -, , 4B)\
+\
+		Mechanical status:\
+			THR_1(integer, percentage, 0-100, 1B)\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 			THR_2(integer, percentage, 0-100, 1B)\
+			AILERON(integer, - , 0-200, 1B)\
+			RUDDER(integer, -, 0-200, 1B)\
+			ELEVATOR(integer, -, 0-200, 1B)\
+			FLAPS(integer, deg, 0-30, 1
+\f1\b B
+\f0\b0 )\
+			REV_1(bool, -, 0/1, 1b)\
+			REV_2(bool, -, 0/1, 1b)\
+			GEAR(bool, -, 0/1, 1b)\
+			BREAK(integer, -, 0,1,2,3, 1b)\
+\
+		Program status:\
+			// \
+			\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 			\
+	Video\
+\
+Local server -> FMC\
+	Command\
+		Steer:\
+			LEVER_X(integer, percentage, -100 - 100, 1B)\
+			LEVER_Y(integer, percentage, -100 - 100, 1B)\
+			THR_1(integer, percentage, 0-100, 1B)\
+			THR_2(integer, percentage, 0-100, 1B)\
+			FLAP(integer, deg, 0-30, 1B)\
+			BREAK(integer, deg, 0,1,2 , 1B)\
+			GEAR(bool, -, 0/1, 1b)\
+		\
+		AP:\
+			AP_ALT_ON(bool, -, 0/1, 1b)\
+			AP_ALT_TAR(integer, feet, 0-65535, 2B)\
+			AP_VS(integer, feet/min, 0-6000, 2B)\
+\
+			AP_HDG_ON(bool, -, 0/1, 1b)\
+			AP_HDG_TAR(integer, deg, 0-359, 2B)\
+			AP_ROLL(integer, deg, -45 - 45, 1B)\
+\
+			AP_AS_ON(boll, -, 0/1, 1b)\
+			AP_AS_TAR(integer, knot, 10-100, 1B)}

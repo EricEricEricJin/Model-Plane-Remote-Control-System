@@ -13,8 +13,8 @@ from time import sleep, time
 
 
 
-# SERVER_IP = "127.0.0.1"
-SERVER_IP = "45.249.94.168"
+SERVER_IP = "127.0.0.1"
+# SERVER_IP = "45.249.94.168"
 
 VIDEO_PORT = 2000
 DATA_PORT = 2100

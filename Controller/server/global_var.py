@@ -28,3 +28,10 @@ data_list = {
 }
 
 video = None
+
+prgm_list = {
+    "TO_RUNWAY": (),
+    "LAND_RUNWAY": {},
+    "AP": {},
+    
+}
