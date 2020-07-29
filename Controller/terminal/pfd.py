@@ -47,14 +47,18 @@ class PFD:
 
         self.speed_cvs.create_rectangle(40, 0, 120, 400, fill = "grey")
 
-        for i in range(8):
+        for i in range(16):
             self.speed_lines.append(self.speed_cvs.create_line(-114, -114, -114, -114, fill = "white"))
             self.speed_texts.append(self.speed_cvs.create_text(-114, -114, text = "0", fill = "white"))
 
         
         # self.speed_cvs.create_rectangle(20, 180, 140, 220, fill = "#202020")
-        self.speed_cvs.create_polygon((20, 180, 80, 180, 120, 200, 80, 220, 20, 220), fill = "#202020")
+        self.speed_cvs.create_polygon((20, 180, 100, 180, 120, 200, 100, 220, 20, 220), fill = "#202020")
         self.speed_val_text = self.speed_cvs.create_text(60, 200, text = "", fill = "white")
+
+        self.accel_indi = self.speed_cvs.create_rectangle(120, 200, 125, 200, fill = "white")
+
+
 
         # init att
 
@@ -72,6 +76,25 @@ class PFD:
             self.att_texts.append(self.att_cvs.create_text(-114, -114, text = str(abs(60 - 10 * i)) ))
 
 
+        # init alt
+
+        self.alt_lines = []
+        self.alt_texts = []
+
+        self.alt_cvs.create_rectangle(40, 0, 120, 400, fill = "grey")
+
+        for i in range(16):
+            self.alt_lines.append(self.alt_cvs.create_line(-114, -114, -114, -114, fill = "white"))
+            self.alt_texts.append(self.alt_cvs.create_text(-114, -114, text = "0", fill = "white"))
+
+        self.alt_cvs.create_polygon((40, 200, 60, 220, 140, 220, 140, 180, 60, 180), fill = "#202020")
+        self.alt_val_text = self.alt_cvs.create_text(100, 200, text = "", fill = "white")
+
+
+        # init vs
+
+        
+
 
 
     def run(self):
@@ -84,7 +107,7 @@ class PFD:
         while True:
             # raw = self.COM.recv()
             # speed, pitch, roll, alt, vs, hdg, lat, lon, tar_lat, tar_lon, tar_dir = unpack("", raw)
-            speed, pitch, roll, alt, vs, hdg, lat, lon, tar_lat, tar_lon, tar_dir = 14, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10
+            speed, accel, pitch, roll, alt, vs, hdg, lat, lon, tar_lat, tar_lon, tar_dir = 14, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10
             # speed = int(input())
             roll = int(input("r"))
             pitch = int(input("p"))
@@ -93,10 +116,13 @@ class PFD:
 
             self.speed_cvs.itemconfigure(self.speed_val_text, text = str(speed))
 
-            for i in range(8):
-                self.speed_cvs.coords(self.speed_lines[i], self._rollbar_line_coord(80, 400, 50, 40, 40, 0, i - 4, 5, speed))
-                self.speed_cvs.coords(self.speed_texts[i], (60, self._rollbar_line_coord(80, 400, 50, 40, 40, 0, i - 4, 5, speed)[1]))
-                self.speed_cvs.itemconfigure(self.speed_texts[i], text = str(self._rollbar_num_val(speed, 5, i - 4)))
+            for i in range(16):
+                self.speed_cvs.coords(self.speed_lines[i], self._rollbar_line_coord(80, 400, 25, 40 - 20 * (i % 2), 40, 0, i - 8, 5, speed))
+                if i % 2 == 0:
+                    self.speed_cvs.coords(self.speed_texts[int(i / 2)], (60, self._rollbar_line_coord(80, 400, 25, 40, 40, 0, i - 8, 5, speed)[1]))
+                    self.speed_cvs.itemconfigure(self.speed_texts[int(i / 2)], text = str(self._rollbar_num_val(speed, 5, i - 8)))
+            
+            self.speed_cvs.coords(self.accel_indi, (120, 200, 125, 200 - accel * 10))
 
             
             # update attitude
@@ -153,6 +179,18 @@ class PFD:
             
             for i in range(26):
                 self.att_cvs.itemconfigure(self.att_texts[i], angle = -roll)
+
+
+            # update altitude
+            self.alt_cvs.itemconfigure(self.alt_val_text, text = str(alt))
+
+            for i in range(16):
+                self.alt_cvs.coords(self.alt_lines[i], self._rollbar_line_coord(80, 400, 25, 40 - 20 * (i % 2), 40, 0, i - 8, 5, alt, side = "l"))
+                if i % 2 == 0:
+                    self.alt_cvs.coords(self.alt_texts[int(i / 2)], (100, self._rollbar_line_coord(80, 400, 25, 40, 40, 0, i - 8, 5, alt, side = "l")[1]))
+                    self.alt_cvs.itemconfigure(self.alt_texts[int(i / 2)], text = str(self._rollbar_num_val(alt, 5, i - 8)))
+
+            
 
 
 
