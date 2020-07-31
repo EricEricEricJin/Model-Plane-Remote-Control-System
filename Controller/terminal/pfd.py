@@ -18,8 +18,8 @@ class PFD:
 
     """Recommanded H:W: 16:10"""
 
-    WIN_H = 640
-    WIN_W = 400
+    WIN_H = 1280
+    WIN_W = 800
 
     STA_IND_H = int(WIN_H / 16)
     STA_IND_W = WIN_W
@@ -95,6 +95,7 @@ class PFD:
         self.speed_val_text = self.speed_cvs.create_text(3 / 8 * self.SPEED_W, 1 / 2 * self.SPEED_H, text = "", fill = "white")
 
         self.accel_indi = self.speed_cvs.create_rectangle(3 / 4 * self.SPEED_W, 1 / 2 * self.SPEED_H, 4 / 5 * self.SPEED_W, 1 / 2 * self.SPEED_H, fill = "white")
+        self.speed_fd = self.speed_cvs.create_polygon(-114, -114, -114, -114, outline = "pink")
 
     def _init_att(self):        
         self.blue_poly = self.att_cvs.create_rectangle((0, 0, self.ATT_A, self.ATT_A), fill = "blue", width = 0)
@@ -127,6 +128,8 @@ class PFD:
         self.alt_cvs.create_polygon((1 / 4 * self.ALT_W, 1 / 2 * self.ALT_H, 3 / 8 * self.ALT_W, 11 / 20 * self.ALT_H, 7 / 8 * self.ALT_W, 11 / 20 * self.ALT_H, 7 / 8 * self.ALT_W, 9 / 20 * self.ALT_H, 3 / 8 * self.ALT_W, 9 / 20 * self.ALT_H), fill = "#202020")
         self.alt_val_text = self.alt_cvs.create_text(5 / 8 * self.ALT_W, 1 / 2 * self.ALT_H, text = "", fill = "white")
 
+        self.alt_fd = self.alt_cvs.create_polygon(-114, -114, -114, -114, outline = "pink")
+
     def _init_vs(self):
         self.vs_cvs.create_polygon((1 / 4 * self.VS_W, 0, 1 / 4 * self.VS_W, self.VS_H, 3 / 4 * self.VS_W, 39 / 40 * self.VS_H, 3 / 4 * self.VS_W, 1 / 40 * self.VS_H), fill = "grey")
         # (40, 200-780tan(0.04083v)) # Fuck magic numbers
@@ -149,28 +152,44 @@ class PFD:
         while True:
             # raw = self.COM.recv()
             # speed, pitch, roll, alt, vs, hdg, lat, lon, tar_lat, tar_lon, tar_dir = unpack("", raw)
-            speed, accel, pitch, roll, alt, vs, hdg, lat, lon, tar_lat, tar_lon, tar_dir = 14, 10, 10, 10, 10, 400, 10, 10, 10, 10, 10, 10
-            speed = 650
+            speed, accel, pitch, roll, alt, vs, hdg, lat, lon, tar_speed, tar_alt, tar_lat, tar_lon, tar_dir, fd_on = 14, 10, 10, 10, 10, 400, 10, 10, 10, 10, 10, 10, 10, 10, True
+            speed = 18
             roll = 20
             pitch = -10
             alt = 10000
             vs = -800
+            speed = int(input())
+            alt = int(input())
 
-            self._update_speed(speed, accel)
+            self._update_speed(speed, accel, fd_on, tar_speed)
             self._update_att(pitch, roll)
-            self._update_alt(alt)
+            self._update_alt(alt, fd_on, tar_alt)
             self._update_vs(vs)
 
-    def _update_speed(self, speed, accel):
+    def _update_speed(self, speed, accel, fd_on, tar_speed):
         self.speed_cvs.itemconfigure(self.speed_val_text, text = str(speed))
 
         for i in range(16):
-            self.speed_cvs.coords(self.speed_lines[i], self._rollbar_line_coord(self.SPEED_W / 2, self.SPEED_H, self.SPEED_H / 16, 1 / 4 * self.SPEED_W - 1 / 8 * self.SPEED_W * (i % 2), 1 / 4 * self.SPEED_W, 0, i - 8, 5, speed))
-            if i % 2 == 0:
+            if i % 2:
+                is_short = (speed % 10 < 5)
+            else:
+                is_short = not(speed % 10 < 5)
+            self.speed_cvs.coords(self.speed_lines[i], self._rollbar_line_coord(self.SPEED_W / 2, self.SPEED_H, self.SPEED_H / 16, 1 / 4 * self.SPEED_W - 1 / 8 * self.SPEED_W * is_short, 1 / 4 * self.SPEED_W, 0, i - 8, 5, speed))
+            if is_short == 0:
                 self.speed_cvs.coords(self.speed_texts[int(i / 2)], (3 / 8 * self.SPEED_W, self._rollbar_line_coord(1 / 2 * self.SPEED_W, self.SPEED_H, 1 / 16 * self.SPEED_H, 1 / 4 * self.SPEED_W, 1 / 4 * self.SPEED_W, 0, i - 8, 5, speed)[1]))
                 self.speed_cvs.itemconfigure(self.speed_texts[int(i / 2)], text = str(self._rollbar_num_val(speed, 5, i - 8)))
         
         self.speed_cvs.coords(self.accel_indi, (3 / 4 * self.SPEED_W, 1 / 2 * self.SPEED_H, 4 / 5 * self.SPEED_W, 1 / 2 * self.SPEED_H - accel * (self.SPEED_H / 40)))
+
+        if fd_on:
+            self.speed_cvs.coords(
+                self.speed_fd, self._rollbar_fd_coord(
+                    (3 / 4 * self.SPEED_W, self.SPEED_H / 2 - (tar_speed - speed) * self.SPEED_H / 80),
+                    self.SPEED_W / 10
+                )
+            )
+        else:
+            self.speed_cvs.coords(self.speed_fd, (-114, -114, -114, -114))
 
     def _update_att(self, pitch, roll):
         long_center_line_coord = self._att_line_coord(self.ATT_A, roll, pitch, 2 * 1.42 * 13 / 8 * self.ATT_A, 1 / 8 * self.ATT_A, 0, 5)
@@ -227,15 +246,33 @@ class PFD:
         for i in range(26):
             self.att_cvs.itemconfigure(self.att_texts[i], angle = -roll)
 
-    def _update_alt(self, alt):
+    def _update_alt(self, alt, fd_on, tar_alt):
         self.alt_cvs.itemconfigure(self.alt_val_text, text = str(alt))
 
         for i in range(16):
-            self.alt_cvs.coords(self.alt_lines[i], self._rollbar_line_coord(self.ALT_W / 2, self.ALT_H, 1 / 16 * self.ALT_H, 1 / 4 * self.ALT_W - 1 / 8 * self.ALT_W * (i % 2), 1 / 4 * self.ALT_W, 0, i - 8, 5, alt, side = "l"))
-            if i % 2 == 0:
+            if i % 2:
+                is_short = alt % 10 < 5
+            else:
+                is_short = not(alt % 10 < 5)
+
+            self.alt_cvs.coords(self.alt_lines[i], self._rollbar_line_coord(self.ALT_W / 2, self.ALT_H, 1 / 16 * self.ALT_H, 1 / 4 * self.ALT_W - 1 / 8 * self.ALT_W * is_short, 1 / 4 * self.ALT_W, 0, i - 8, 5, alt, side = "l"))
+            
+            if is_short == 0:
+                
                 self.alt_cvs.coords(self.alt_texts[int(i / 2)], (5 / 8 * self.ALT_W, self._rollbar_line_coord(self.ALT_W / 2, self.ALT_H, 1 / 16 * self.ALT_H, 1 / 4 * self.ALT_W, 1 / 4 * self.ALT_W, 0, i - 8, 5, alt, side = "l")[1]))
                 self.alt_cvs.itemconfigure(self.alt_texts[int(i / 2)], text = str(self._rollbar_num_val(alt, 5, i - 8)))
-
+            
+        if fd_on:
+            self.alt_cvs.coords(
+                self.alt_fd, 
+                self._rollbar_fd_coord(
+                    (1 / 4 * self.ALT_W, self.ALT_H / 2 - (tar_alt - alt) * self.ALT_H / 80),
+                    self.ALT_W / 10
+                )
+            )
+        else:
+            self.alt_cvs.coords(self.alt_fd, (-114, -114, -114, -114))
+        
     def _update_vs(self, vs):
         self.vs_cvs.coords(self.vs_line, self._vs_line_coord(vs))
         if abs(vs) <= 300:
@@ -299,6 +336,31 @@ class PFD:
                 l + dx,
                 ((v % u) / u + n) * d + 0.5 * h + dy
             )
+
+    def _rollbar_fd_coord(self, o, a):
+        """
+            o: (x, y) or origin point
+            a: side length
+        """
+        return (
+            o[0] - a / 2, o[1] - a / 2,
+            o[0] + a / 2, o[1] - a / 2,
+            o[0] + a / 2, o[1] - 3 / 10 * a,
+            o[0] + a / 4, o[1] - 1 / 10 * a,
+            o[0] + a / 4, o[1] + 1 / 10 * a,
+            o[0] + a / 2, o[1] + 3 / 10 * a,
+            o[0] + a / 2, o[1] + a / 2,
+            o[0] - a / 2, o[1] + a / 2,
+            o[0] - a / 2, o[1] + 3 / 10 * a,
+            o[0] - a / 4, o[1] + 1 / 10 * a,
+            o[0] - a / 4, o[1] - 1 / 10 * a,
+            o[0] - a / 2, o[1] - 3 / 10 * a
+        )
+
+
+        
+
+
 
     def _rollbar_num_val(self, v, u, n):
         return v - (v % u) - n * u
