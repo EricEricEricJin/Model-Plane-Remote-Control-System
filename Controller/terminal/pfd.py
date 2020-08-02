@@ -12,7 +12,42 @@ from socket import *
 from struct import unpack
 from threading import Thread
 import math
+from time import sleep
 from com import Communicate
+
+class updateTest:
+    def __init__(self):
+        self.data_list = {
+            "pitch": 0, "roll": 0, 
+            "air_speed": 0, "gnd_speed": 0, "accel": 0,
+            "psr_alt": 0, "tof_alt": 0,"vs": 0,
+            "hdg": 0,
+            "long": 0, "lat": 0,
+            "FD_ON": False, 
+            "tar_speed": 0, "tar_alt": 0, "tar_hdg": 0, "tar_long": 0, "tar_lat": 0,
+            "sta" : {
+                "CRUISE": True, "MANU": True, "FAC": True, "AP_HDG": True,
+                "TO/LD": True, "AUTO": True, "MCAS": True, "AP_ALT": True,
+                "AP_SPD": True
+            }
+        }
+        self.P = PFD()
+        
+
+
+    def run(self):
+        t = Thread(target = self._service)
+        t.start()
+        self.P.run()
+
+    def _service(self):
+        while True:
+            self.data_list["pitch"] += 1
+            self.P.update(self.data_list)
+            sleep(1)
+
+
+
 
 class PFD:
 
@@ -49,6 +84,8 @@ class PFD:
     HDG_Y = SPEED_Y + SPEED_H + (WIN_H - SPEED_H - STA_IND_H - HDG_A) / 2
 
     def __init__(self):
+        self.data_list = {}
+        
         # self.COM = Communicate()
         # self.COM.send(b"pfd")
 
@@ -75,11 +112,35 @@ class PFD:
         self.hdg_cvs.place(x = self.HDG_X, y = self.HDG_Y)
         # NOTE: buyao yongman h
 
+        self._init_sta_ind()
         self._init_speed()
         self._init_att()
         self._init_alt()
         self._init_vs()
+        self._init_hdg()
 
+    def _init_sta_ind(self):
+        for i in range(3):
+            coord = (
+                self.STA_IND_W / 4 * (i + 1), 0, 
+                self.STA_IND_W / 4 * (i + 1), self.STA_IND_H / 5 * 4
+            )
+            self.sta_ind_cvs.create_line(coord, fill = "white")
+
+        self.sta_ind_disp_text = [
+            ["CRUISE", "MANU", "FAC", "AP_HDG"],
+            ["TO/LD", "AUTO", "MCAS", "AP_ALT"],
+            ["", "", "", "AP_SPD"],
+            ["", "", "", ""]
+        ]
+
+        self.sta_ind_disp_mat = []
+
+        for i in range(4):
+            self.sta_ind_disp_mat.append([])
+            for j in range(4):
+                coord = ((1 + 2 * j) / 8 * self.STA_IND_W, (1 + 2 * i) / 8 * self.STA_IND_H)
+                self.sta_ind_disp_mat[i].append(self.sta_ind_cvs.create_text(coord, text = self.sta_ind_disp_text[i][j], fill = "black"))
 
     def _init_speed(self):
         self.speed_lines = []
@@ -140,31 +201,82 @@ class PFD:
         self.vs_line = self.vs_cvs.create_line(-114, -114, -114, -114, width = self.VS_H / 100)
 
     def _init_hdg(self):
-        pass
+
+        self.hdg_real_dis_betw_circ = 100 # ft
+        self.hdg_delta_r_of_circ = self.HDG_A / 10
+
+        # Plane sign
+        self.hdg_cvs.create_polygon(
+            self._hdg_planesign_coord(self.HDG_A / 2, self.HDG_A / 2, self.HDG_A / 100),
+            outline = "white"
+        )
+
+        # Heading ray
+        self.hdg_cvs.create_line(
+            self.HDG_A / 2, self.HDG_A / 2 - 4 * self.hdg_delta_r_of_circ, 
+            self.HDG_A / 2, self.HDG_A / 2 - self.HDG_A / 200,
+            fill = "white"
+        )
+
+        # radar panel
+        for i in range(1, 5):
+            self.hdg_cvs.create_arc(self.HDG_A / 2 - i * self.hdg_delta_r_of_circ, self.HDG_A / 2 - i * self.hdg_delta_r_of_circ, self.HDG_A / 2 + i * self.hdg_delta_r_of_circ, self.HDG_A / 2 + i * self.hdg_delta_r_of_circ, start = 270, extent = 359, outline = "white", style = ARC)
+            if i < 4:
+                self.hdg_cvs.create_text(self.HDG_A / 2 - i * self.hdg_delta_r_of_circ - 10, self.HDG_A / 2, text = str(i), fill = "white")
+
+        self.hdg_line_num = 72
+        self.hdg_line_list = []
+        self.hdg_text_list = []
+
+        # lines KEDU
+        for i in range(self.hdg_line_num):
+            self.hdg_line_list.append(self.hdg_cvs.create_line(-114, -114, -114, -114, fill = "white"))
+            if i % 2 == 0:
+                self.hdg_text_list.append(self.hdg_cvs.create_text(-114, -114, text = str(int(i * 360 / self.hdg_line_num)), fill = "white"))
+
+        self.hdg_cvs.create_polygon(
+            self._hdg_numbox_coord(self.HDG_A / 2, self.HDG_A / 2 - 4 * self.hdg_delta_r_of_circ, self.HDG_A / 16),
+            outline = "white"
+        )
+
+        self.hdg_val_text = self.hdg_cvs.create_text(self.HDG_A / 2, self.HDG_A / 2 - 4 * self.hdg_delta_r_of_circ - self.HDG_A / 32, text = "", fill = "white")
+
+
+
+        
 
     def run(self):
-        t = Thread(target = self._service)
-        t.start()
-
+        # t = Thread(target = self._service)
+        # t.start()
+        self.root.after(50, self._service)
         self.root.mainloop()
 
-    def _service(self):
-        while True:
-            # raw = self.COM.recv()
-            # speed, pitch, roll, alt, vs, hdg, lat, lon, tar_lat, tar_lon, tar_dir = unpack("", raw)
-            speed, accel, pitch, roll, alt, vs, hdg, lat, lon, tar_speed, tar_alt, tar_lat, tar_lon, tar_dir, fd_on = 14, 10, 10, 10, 10, 400, 10, 10, 10, 10, 10, 10, 10, 10, True
-            speed = 18
-            roll = 20
-            pitch = -10
-            alt = 10000
-            vs = -800
-            speed = int(input())
-            alt = int(input())
+    def update(self, data_list):
+        self.data_list = data_list
 
-            self._update_speed(speed, accel, fd_on, tar_speed)
-            self._update_att(pitch, roll)
-            self._update_alt(alt, fd_on, tar_alt)
-            self._update_vs(vs)
+    def _service(self):
+        try:
+            self._update_sta_ind(self.data_list["sta"])
+            self._update_speed(self.data_list["air_speed"], self.data_list["accel"], self.data_list["FD_ON"], self.data_list["FD_ON"])
+            self._update_att(self.data_list["pitch"], self.data_list["roll"])
+            self._update_alt(self.data_list["psr_alt"], self.data_list["FD_ON"], self.data_list["tar_alt"])
+            self._update_vs(self.data_list["vs"])
+            self._update_hdg(16)
+            
+            
+            self.root.after(100, self._service)
+
+        except Exception as e:
+            print(e)
+            pass
+
+    def _update_sta_ind(self, sta_dict):
+        print(sta_dict)
+        for i in range(len(self.sta_ind_disp_mat)):
+            for j in range(len(self.sta_ind_disp_mat[i])):
+                if self.sta_ind_disp_text[i][j] != "":
+                    color = "green" if sta_dict[self.sta_ind_disp_text[i][j]] else "black"
+                    self.sta_ind_cvs.itemconfigure(self.sta_ind_disp_mat[i][j], fill = color)
 
     def _update_speed(self, speed, accel, fd_on, tar_speed):
         self.speed_cvs.itemconfigure(self.speed_val_text, text = str(speed))
@@ -283,7 +395,34 @@ class PFD:
             color = "red"
         self.vs_cvs.itemconfigure(self.vs_line, fill = color)
 
+    def _update_hdg(self, hdg):
+        for i in range(self.hdg_line_num):
+            if i % 2:
+                # short
+                coord = self._hdg_line_coord(4 * self.hdg_delta_r_of_circ, 3.8 * self.hdg_delta_r_of_circ, 360 / self.hdg_line_num, self.HDG_A / 2, self.HDG_A / 2, i, hdg)
+            else:
+                # long
+                coord = self._hdg_line_coord(4 * self.hdg_delta_r_of_circ, 3.6 * self.hdg_delta_r_of_circ, 360 / self.hdg_line_num, self.HDG_A / 2, self.HDG_A / 2, i, hdg)
+                
+                coord_t = self._hdg_line_coord(4.2 * self.hdg_delta_r_of_circ, 4 * self.hdg_delta_r_of_circ, 360 / self.hdg_line_num, self.HDG_A / 2, self.HDG_A / 2, i, hdg)[0:2]
+                self.hdg_cvs.coords(
+                    self.hdg_text_list[int(i / 2)],
+                    coord_t
+                )
+                self.hdg_cvs.itemconfigure(
+                    self.hdg_text_list[int(i / 2)],
+                    angle = hdg - i * 360 / self.hdg_line_num
+                )
 
+            self.hdg_cvs.coords(
+                self.hdg_line_list[i],
+                coord
+            )
+        
+        self.hdg_cvs.itemconfigure(self.hdg_val_text, text = str(hdg))
+            
+
+            
 
 
 
@@ -357,11 +496,6 @@ class PFD:
             o[0] - a / 2, o[1] - 3 / 10 * a
         )
 
-
-        
-
-
-
     def _rollbar_num_val(self, v, u, n):
         return v - (v % u) - n * u
         
@@ -384,6 +518,50 @@ class PFD:
             # Fucking magic numbers when 80x400
         """
 
+    def _hdg_line_coord(self, R, r, d, xo, yo, n, v):
+        """
+            R: Big circle radi
+            r: Samll circle radi
+            d: deg between two line
+            xo: center x
+            yo: center y
+            n: nth line
+            v: value(deg)
+        """
+
+        theta = n * d - v
+        
+        return (
+            xo + math.sin(math.radians(theta)) * R, yo - math.cos(math.radians(theta)) * R,
+            xo + math.sin(math.radians(theta)) * r, yo - math.cos(math.radians(theta)) * r
+        )
+
+    def _hdg_num_val(self, v, d, n):
+        """
+            v: hdg in deg
+            d: deg diff between lines
+            n: nth number
+        """
+
+        return n * d
+
+    def _hdg_planesign_coord(self, xo, yo, a):
+        return (
+            xo, yo - a,
+            xo + a / 2, yo - a / 4,
+            xo + a / 2, yo + a,
+            xo - a / 2, yo + a,
+            xo - a / 2, yo - a / 4,
+        )
+
+    def _hdg_numbox_coord(self, x, y, a):
+        return (
+            x, y,
+            x + a / 2, y - a / 4,
+            x + a / 2, y - a / 3 * 2,
+            x - a / 2, y - a / 3 * 2,
+            x - a / 2, y - a / 4
+        )
 if __name__ == "__main__":
-    P = PFD()
-    P.run()
+    UT = updateTest()
+    UT.run()
