@@ -2,10 +2,10 @@
 from communication import Communication
 from motion import Motion
 from sensor import Sensor
-from indirect import inDirect
 from ap import AP
-from mcas import MCAS
-from direct import Direct
+from manual import Manual
+from fdr import flightDataRecorder
+
 
 
 import global_var
@@ -14,78 +14,40 @@ class Main():
     def __init__(self):
         self.Communication_ins = Communication()
         self.Motion_ins = Motion()
-        self.Sensor_ins = Sensor()
-        self.inDirect_ins = inDirect(self.Motion_ins)
+        self.Sensor_ins = Sensor()        
         self.AP_ins = AP(self.Motion_ins)
-        self.MCAS_ins = MCAS(self.Motion_ins)
-        self.Direct_ins = Direct(self.Motion_ins)
-
+        self.Manual_ins = Manual(self.Motion_ins)
+        self.FDR_ins = flightDataRecorder()
 
     def run(self):
-        indirect_status = [None, None, None]
-        ap_status = [None, None, None]
-        mcas_on = None
-        direct_status = [None, None, None, None]
-
         while True:
-            if global_var.command_list["MCAS_ON"] == True:
-                mcas_on = True
+            # Update Sensor
+            self.Sensor_ins.update()
+
+            # Update Motion
+            if global_var.command_list["AP_VEL_ON"] == True:
+                self.AP_ins.update_engine()
             else:
-                mcas_on = False
+                self.Manual_ins.update_engine()
 
-            if global_var.command_list["AP_ALT_ON"] == True:
-                indirect_status[1] = False
-                ap_status[1] = True
-                direct_status[1] = False
-
-            elif global_var.command_list["INDIRECT"] == True:
-                indirect_status[1] = True
-                ap_status[1] = False
-                direct_status[1] = False
-
+            if global_var.command_list['AP_ALT_ON'] == True:
+                self.AP_ins.update_elevator()
             else:
-                indirect_status[1] = False
-                ap_status[1] =  False
-                direct_status[1] = True
+                self.Manual_ins.update_elevator()
 
             if global_var.command_list["AP_HDG_ON"] == True:
-                indirect_status[2] = False
-                ap_status[2] =  True
-                direct_status[2] = False
-                direct_status[3] = False
-            elif global_var.command_list["INDIRECT"] == True:
-                indirect_status[2] = True
-                ap_status[2] =  False
-                direct_status[2] = False
-                direct_status[3] = False
+                self.AP_ins.update_aileron()
             else:
-                indirect_status[2] = False
-                ap_status[2] =  False
-                direct_status[2] = True
-                direct_status[3] = True
+                self.Manual_ins.update_aileron()
 
-            if global_var.command_list["AP_VEL_ON"] == True:
-                indirect_status[0] = False
-                ap_status[0] =  True
-                direct_status[0] = False
-            elif global_var.command_list["INDIRECT"] == True:
-                indirect_status[0] = True
-                ap_status[0] =  False
-                direct_status[0] = False
+            self.Manual_ins.update_rudder()
+            
+            # Update FDR
+            self.FDR_ins.update()
 
-            else:
-                indirect_status[0] = False
-                ap_status[0] =  False
-                direct_status[0] = True
 
-            if self.MCAS_ins.is_engaging() == True:
-                indirect_status = [False, False, False]
-                ap_status = [False, False, False]
-                direct_status = [False, False, False, False]
 
-            self.inDirect_ins.change_status(*indirect_status)
-            self.AP_ins.change_status(*ap_status)
-            self.Direct_ins.change_status(*direct_status)
+
 
 if __name__ == "__main__":
     MAIN = Main()

@@ -23,8 +23,8 @@ class updateTest:
             "psr_alt": 0, "tof_alt": 0,"vs": 0,
             "hdg": 0,
             "long": 0, "lat": 0,
-            "FD_ON": False, 
-            "tar_speed": 0, "tar_alt": 0, "tar_hdg": 0, "tar_long": 0, "tar_lat": 0,
+            "FD_ON": True, 
+            "tar_speed": 10, "tar_alt": -10, "tar_hdg": 0, "tar_long": 0, "tar_lat": 0,
             "sta" : {
                 "CRUISE": True, "MANU": True, "FAC": True, "AP_HDG": True,
                 "TO/LD": True, "AUTO": True, "MCAS": True, "AP_ALT": True,
@@ -53,7 +53,7 @@ class PFD:
 
     """Recommanded H:W: 16:10"""
 
-    WIN_H = 1280
+    WIN_H = 1200
     WIN_W = 800
 
     STA_IND_H = int(WIN_H / 16)
@@ -91,6 +91,7 @@ class PFD:
 
         self.root = Tk()
         self.root.geometry(str(self.WIN_W) + "x" + str(self.WIN_H))
+        self.root.configure(bg = "black")
         # self.root.overrideredirect(True)
 
         self.sta_ind_cvs = Canvas(master = self.root, height = self.STA_IND_H, width = self.STA_IND_W, bg = "black", highlightthickness = 0)
@@ -241,6 +242,8 @@ class PFD:
 
         self.hdg_val_text = self.hdg_cvs.create_text(self.HDG_A / 2, self.HDG_A / 2 - 4 * self.hdg_delta_r_of_circ - self.HDG_A / 32, text = "", fill = "white")
 
+        # self.hdg_fd = 
+
 
 
         
@@ -257,7 +260,7 @@ class PFD:
     def _service(self):
         try:
             self._update_sta_ind(self.data_list["sta"])
-            self._update_speed(self.data_list["air_speed"], self.data_list["accel"], self.data_list["FD_ON"], self.data_list["FD_ON"])
+            self._update_speed(self.data_list["air_speed"], self.data_list["accel"], self.data_list["FD_ON"], self.data_list["tar_speed"])
             self._update_att(self.data_list["pitch"], self.data_list["roll"])
             self._update_alt(self.data_list["psr_alt"], self.data_list["FD_ON"], self.data_list["tar_alt"])
             self._update_vs(self.data_list["vs"])
@@ -422,9 +425,6 @@ class PFD:
         self.hdg_cvs.itemconfigure(self.hdg_val_text, text = str(hdg))
             
 
-            
-
-
 
     def _att_line_coord(self, a, r, p, l, d, n, u):
         """
@@ -562,6 +562,11 @@ class PFD:
             x - a / 2, y - a / 3 * 2,
             x - a / 2, y - a / 4
         )
+
+    def _hdg_fd_coord(self, xo, yo, r, deg):
+        # 
+        pass
+    
 if __name__ == "__main__":
     UT = updateTest()
     UT.run()

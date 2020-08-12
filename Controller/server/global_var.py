@@ -13,9 +13,12 @@ command_list = {
 
 data_list = {
 
-    "PITCH": 0, "YAW": 0, "ROLL": 0,
-    "ALT": 0, "RADIO_H": 0,
+    "PITCH": 0, "HDG": 0, "ROLL": 0,
+    "ALT": 0, "RADIO_H": 0, "VS": 0,
     "AIR_V": 0, "GROUND_V": 0,
+    "ACCEL": 0,
+
+    "LONG": 0, "LAT": 0,
 
 
     "ENG_1": 0, "ENG_2": 0,
@@ -29,9 +32,11 @@ data_list = {
 
 video = None
 
-prgm_list = {
-    "TO_RUNWAY": (),
-    "LAND_RUNWAY": {},
-    "AP": {},
-    
+local_infos = {
+    "FD_ON": True,
+    "STATUS": {
+        "CRUISE": True, "MANU": True, "FAC": True, "AP_HDG": True,
+        "TO/LD": True, "AUTO": True, "MCAS": True, "AP_ALT": True,
+        "AP_SPD": True
+    }
 }

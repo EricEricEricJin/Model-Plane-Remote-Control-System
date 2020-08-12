@@ -22,20 +22,26 @@ class webCam:
     def __del__(self):
         pass
 
+class TOF:
+    def __init__(self, iic_ins, addr):
+        self.bus = iic_ins
+        self.addr = addr
+
+    def read(self):
+        raw = self.bus.read_i2c_block_data(self.addr, 0x04)
+        return (raw[0] - 128) * 256 + (raw[1] - 128)
+
+    def __del__(self):
+        pass
+
+
 class Sensor:
     def __init__(self):
         self.serve = True
         self.CAMERA = webCam()
 
-    def run(self):
-        
-        t = Thread(target = self._service)
-        t.start()
-
-
-    def _service(self):
-        while self.serve:
-            global_var.video = self.CAMERA.arr_read()
+    def update(self):
+        pass
 
     def __del__(self):
         self.serve = False
@@ -43,4 +49,3 @@ class Sensor:
 
 if __name__ == "__main__":
     S = Sensor()
-    S.run()
